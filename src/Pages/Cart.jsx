@@ -1,9 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart, updateQuantity, clearCart } from "../redux/cartSlice";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const Cart = () => {
+  const [loading, setLoading] = useState(false);
   const cart = useSelector((state) => state.cart.items);
   const dispatch = useDispatch();
 
@@ -12,8 +14,7 @@ const Cart = () => {
     c_phone: "",
     address: "",
     courier: "steadfast",
-    cod_amount: "",
-    delivery_charge: "80",
+    delivery_charge: "70",
   });
 
   const total = cart.reduce(
@@ -22,30 +23,39 @@ const Cart = () => {
   );
   const codTotal = total + Number(form.delivery_charge);
 
+  useEffect(() => {
+    const charge = form.courier === "redex" ? "80" : "70";
+    setForm((prev) => ({ ...prev, delivery_charge: charge }));
+  }, [form.courier]);
+
   const handleOrder = async () => {
+    const { c_name, c_phone, address } = form;
+    if (!c_name || !c_phone || !address) {
+      toast.error("Name, Phone, and Address are required.");
+      return;
+    }
+
     const payload = {
       product_ids: cart.map((i) => i.product.id).join(","),
       s_product_qty: cart.map((i) => i.quantity).join(","),
-      c_name: form.c_name,
-      c_phone: form.c_phone,
-      courier: form.courier,
-      address: form.address,
+      ...form,
       cod_amount: codTotal.toString(),
       advance: null,
       discount_amount: null,
-      delivery_charge: form.delivery_charge,
     };
-    console.log(payload);
+    setLoading(true);
     try {
       await axios.post(
         "https://admin.refabry.com/api/public/order/create",
         payload
       );
-      alert("Order placed successfully!");
+      toast.success("Order placed successfully!");
       dispatch(clearCart());
     } catch (err) {
       console.error(err);
-      alert("Order failed.");
+      toast.error("Order failed.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,10 +113,15 @@ const Cart = () => {
               className="border p-2 rounded"
             />
             <input
-              type="number"
+              type="tel"
               placeholder="Phone Number"
               value={form.c_phone}
-              onChange={(e) => setForm({ ...form, c_phone: e.target.value })}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (/^\d*$/.test(val)) {
+                  setForm({ ...form, c_phone: val });
+                }
+              }}
               className="border p-2 rounded"
             />
             <input
@@ -117,11 +132,48 @@ const Cart = () => {
               className="border p-2 rounded"
             />
 
+            <select
+              value={form.courier}
+              onChange={(e) => setForm({ ...form, courier: e.target.value })}
+              className="border p-2 rounded"
+            >
+              <option value="steadfast">Steadfast (70৳)</option>
+              <option value="redex">Redex (80৳)</option>
+            </select>
+
+            <p className="text-sm text-gray-600">
+              Delivery Charge: ৳{form.delivery_charge}
+            </p>
+
             <button
               onClick={handleOrder}
-              className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
+              className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 flex items-center justify-center"
+              disabled={loading}
             >
-              Place Order
+              {loading ? (
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4l3.5-3.5L12 0v4a8 8 0 000 16v4l3.5-3.5L12 20v-4a8 8 0 01-8-8z"
+                  ></path>
+                </svg>
+              ) : (
+                "Place Order"
+              )}
             </button>
           </div>
         </>
