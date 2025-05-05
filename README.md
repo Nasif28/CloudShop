@@ -7,7 +7,6 @@ A modern and minimal e-commerce frontend built with **React**, **Redux Toolkit**
 ## 🌐 Live Preview
 
 **🔗 [View Live](https://cloud-shop-olive.vercel.app)**
-*(Replace with your deployed URL if available)*
 
 ---
 
@@ -42,7 +41,7 @@ A modern and minimal e-commerce frontend built with **React**, **Redux Toolkit**
 
    ```bash
    git clone https://github.com/Nasif28/CloudShop.git
-   cd refabry-shop
+   cd cloudshop
    ```
 
 2. **Install dependencies:**
