@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  --color-nav: #020407;
+  --color-button: #010205;
+  --color-paragraph: #05131d;
+  --color-foundationBlue: #00245f;
+  --color-foundationBlue400: #335386;
+  --color-FoundationYellow: #fce38a;
+  --color-foundationYellow800: #8b7d4c;
+  --color-title: #262626;
+  --color-subTitle: #59595a;
+  --color-subTitle2: #b9bdc7;
+  --color-cardBG: #f0f0f0;
+  --color-cardTag: #4c4c4d;
+  --color-buttonBG: #002868;
+  --color-role: #878c91;
+  --color-faq: #636363;
+  --color-aiTitle: #1b1b1b;
+  --color-aiSubTitle: #171d25;
+  --color-aiPara: #909090;
+  --color-aiBG: #f2f3f3;
+}
+
+body {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.maxContainer {
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+.myContainer {
+  max-width: 1480px;
+  padding: 0 20px;
+  margin: 0 auto;
+}
+
+html {
+  scroll-behavior: smooth;
+}
